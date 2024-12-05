@@ -23,8 +23,14 @@ func main() {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+
+		if command == "exit 0" {
+			os.Exit(0)
+		}
+
 		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
 		fmt.Fprint(os.Stdout, "$ ")
+
 	}
 
 }
