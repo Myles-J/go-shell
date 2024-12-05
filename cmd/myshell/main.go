@@ -28,6 +28,10 @@ func main() {
 			os.Exit(0)
 		}
 
+		if strings.Split(command, " ")[0] == "echo" {
+			fmt.Fprintf(os.Stdout, "%s\n", strings.Split(command, " ")[1])
+		}
+
 		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
 		fmt.Fprint(os.Stdout, "$ ")
 
