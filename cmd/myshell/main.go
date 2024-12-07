@@ -112,12 +112,6 @@ func initCommands() {
 	for cmd, fn := range builtinCommands {
 		registerCommand(cmd, fn)
 	}
-
-	// registerCommand("echo", echo)
-	// registerCommand("exit", exit)
-	// registerCommand("type", typer)
-	// registerCommand("pwd", pwd)
-	// registerCommand("cd", cd)
 }
 
 func main() {
