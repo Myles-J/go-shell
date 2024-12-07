@@ -87,8 +87,7 @@ func cd(args Args) {
 
 	err := os.Chdir(args[0])
 	if err != nil {
-		fmt.Printf("error changing directory: %s", err.Error())
-		os.Exit(1)
+		fmt.Printf("cd: %s: No such file or directory\n", args[0])
 	}
 }
 
