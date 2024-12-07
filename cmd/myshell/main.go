@@ -2,24 +2,27 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
 
 type (
-	cmdFnc func([]string)
+	Args    []string
+	CmdFunc func(Args)
 )
 
-var commands = make(map[string]cmdFnc)
+var commands = make(map[string]CmdFunc)
 
-func registerCommand(cmd string, fn cmdFnc) {
+func registerCommand(cmd string, fn CmdFunc) {
 	commands[cmd] = fn
 }
 
-func exit(args []string) {
+func exit(args Args) {
 	if len(args) == 0 {
 		os.Exit(1)
 	}
@@ -28,7 +31,19 @@ func exit(args []string) {
 	}
 }
 
-func typer(args []string) {
+func returnCommandFilePath(command string) (string, error) {
+	paths := strings.Split(os.Getenv("PATH"), ":")
+
+	for _, path := range paths {
+		fp := filepath.Join(path, command)
+		if _, err := os.Stat(fp); err == nil {
+			return fp, nil
+		}
+	}
+	return "", errors.New("command not found")
+}
+
+func typer(args Args) {
 	if len(args) == 0 {
 		fmt.Println("")
 	}
@@ -40,19 +55,28 @@ func typer(args []string) {
 		return
 	}
 
-	paths := strings.Split(os.Getenv("PATH"), ":")
+	path, err := returnCommandFilePath(args[0])
 
-	for _, path := range paths {
-		fp := filepath.Join(path, args[0])
-		if _, err := os.Stat(fp); err == nil {
-			fmt.Println(fp)
-			return
-		}
+	if err != nil {
+		fmt.Printf("%s: not found\n", args[0])
+		return
 	}
-	fmt.Printf("%s: not found\n", args[0])
+
+	fmt.Println(path)
+
+	// paths := strings.Split(os.Getenv("PATH"), ":")
+
+	// for _, path := range paths {
+	// 	fp := filepath.Join(path, args[0])
+	// 	if _, err := os.Stat(fp); err == nil {
+	// 		fmt.Println(fp)
+	// 		return
+	// 	}
+	// }
+	// fmt.Printf("%s: not found\n", args[0])
 }
 
-func echo(args []string) {
+func echo(args Args) {
 	phrase := strings.Join(args, " ")
 	fmt.Fprintf(os.Stdout, "%s\n", phrase)
 }
@@ -71,7 +95,6 @@ func main() {
 	initCommands()
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
-
 		// Wait for user input
 		in, err := bufio.NewReader(os.Stdin).ReadString('\n')
 		if err != nil {
@@ -82,6 +105,18 @@ func main() {
 		inputs := strings.Split(strings.TrimSpace(in), " ")
 		cmd := inputs[0]
 		args := inputs[1:]
+
+		path, err := returnCommandFilePath(cmd)
+		if err == nil {
+			// Add the command to the command list
+			commands[cmd] = func(args Args) {
+				cmd := exec.Command(path, args...)
+				cmd.Stdin = os.Stdin
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				cmd.Run()
+			}
+		}
 
 		cmdFn, ok := commands[cmd]
 
