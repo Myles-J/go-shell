@@ -63,22 +63,20 @@ func typer(args Args) {
 	}
 
 	fmt.Println(path)
-
-	// paths := strings.Split(os.Getenv("PATH"), ":")
-
-	// for _, path := range paths {
-	// 	fp := filepath.Join(path, args[0])
-	// 	if _, err := os.Stat(fp); err == nil {
-	// 		fmt.Println(fp)
-	// 		return
-	// 	}
-	// }
-	// fmt.Printf("%s: not found\n", args[0])
 }
 
 func echo(args Args) {
 	phrase := strings.Join(args, " ")
 	fmt.Fprintf(os.Stdout, "%s\n", phrase)
+}
+
+func pwd(args Args) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		fmt.Printf("error getting pwd: %s", err.Error())
+		os.Exit(1)
+	}
+	fmt.Println(pwd)
 }
 
 func notFound(cmd string) {
@@ -89,6 +87,7 @@ func initCommands() {
 	registerCommand("echo", echo)
 	registerCommand("exit", exit)
 	registerCommand("type", typer)
+	registerCommand("pwd", pwd)
 }
 
 func main() {
