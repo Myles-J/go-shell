@@ -79,6 +79,19 @@ func pwd(args Args) {
 	fmt.Println(pwd)
 }
 
+func cd(args Args) {
+	if len(args) == 0 {
+		fmt.Println("usage: cd <directory>")
+		return
+	}
+
+	err := os.Chdir(args[0])
+	if err != nil {
+		fmt.Printf("error changing directory: %s", err.Error())
+		os.Exit(1)
+	}
+}
+
 func notFound(cmd string) {
 	fmt.Printf("%s: command not found\n", cmd)
 }
@@ -88,6 +101,7 @@ func initCommands() {
 	registerCommand("exit", exit)
 	registerCommand("type", typer)
 	registerCommand("pwd", pwd)
+	registerCommand("cd", cd)
 }
 
 func main() {
