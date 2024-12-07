@@ -31,6 +31,27 @@ func main() {
 			continue
 		}
 
+		if splitCommand[0] == "type" {
+			kwargs := map[string]string{
+				"help": "help",
+				"exit": "exit",
+				"echo": "echo",
+				"type": "type",
+			}
+
+			val, ok := kwargs[splitCommand[1]]
+			if ok {
+				fmt.Fprintf(os.Stdout, "%s is a shell builtin\n", val)
+				fmt.Fprint(os.Stdout, "$ ")
+				continue
+			} else {
+				fmt.Fprintf(os.Stdout, "%s: not found\n", splitCommand[1])
+				fmt.Fprint(os.Stdout, "$ ")
+				continue
+			}
+
+		}
+
 		if command == "exit 0" {
 			os.Exit(0)
 		}
