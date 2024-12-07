@@ -9,8 +9,6 @@ import (
 
 func main() {
 
-	// Uncomment this block to pass the first stage
-
 	fmt.Fprint(os.Stdout, "$ ")
 
 	// Wait for user input
@@ -24,12 +22,17 @@ func main() {
 			os.Exit(1)
 		}
 
-		if command == "exit 0" {
-			os.Exit(0)
+		splitCommand := strings.Split(command, " ")
+
+		if splitCommand[0] == "echo" {
+			echoPhrase := strings.Join(splitCommand[1:], " ")
+			fmt.Fprintf(os.Stdout, "%s\n", echoPhrase)
+			fmt.Fprint(os.Stdout, "$ ")
+			continue
 		}
 
-		if strings.Split(command, " ")[0] == "echo" {
-			fmt.Fprintf(os.Stdout, "%s\n", strings.Split(command, " ")[1])
+		if command == "exit 0" {
+			os.Exit(0)
 		}
 
 		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
