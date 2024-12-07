@@ -34,7 +34,7 @@ func main() {
 		if splitCommand[0] == "type" {
 			kwargs := map[string]string{
 				"help": "help",
-				"exit": "exit",
+				"exit": "exit", 
 				"echo": "echo",
 				"type": "type",
 			}
